@@ -7,7 +7,14 @@ class MainSpider(scrapy.Spider):
     name = 'main'
     allowed_domains = ['ecerts.ssc.nsw.gov.au']
     page = 1
-    click_next_page = True
+
+    def __init__(self, date_from='01/01/2017', date_to='02/02/2017', *args, **kwargs):
+        """
+        crawl main -a date_from=01/01/2017 -a date_to=07/01/2017 -o data.json
+        """
+        self.date_from = date_from
+        self.date_to = date_to
+        super(MainSpider, self).__init__(*args, **kwargs)
 
     def start_requests(self):
         yield scrapy.Request(
@@ -18,8 +25,8 @@ class MainSpider(scrapy.Spider):
         yield scrapy.FormRequest(
             'https://ecerts.ssc.nsw.gov.au/eproperty/P1/eTrack/eTrackApplicationSearch.aspx?Group=DA&ResultsFunction=SSC.P1.ETR.RESULT.DA&r=SSC.P1.WEBGUEST&f=SSC.P1.ETR.SEARCH.DA',
             formdata={
-                'ctl00$Content$txtDateFrom$txtText': '01/01/2017',
-                'ctl00$Content$txtDateTo$txtText': '07/01/2017',
+                'ctl00$Content$txtDateFrom$txtText': self.date_from,
+                'ctl00$Content$txtDateTo$txtText': self.date_to,
                 'ctl00$Content$ddlApplicationType$elbList': 'all',
                 'ctl00$Content$btnSearch': 'Search',
                 '__EVENTTARGET': 'ctl00$Content$cusResultsGrid$repWebGrid$ctl00$grdWebGridTabularView',
